@@ -13,7 +13,7 @@ namespace StudioAV.WebUI.Areas.Admin.Controllers
     public class ProductController : Controller
     {
         private IProductRepository _repository;
-        static int ItemsPerPage = 12;
+        public static int ItemsPerPage = 12;
 
         public ProductController(IProductRepository repository)
         {
