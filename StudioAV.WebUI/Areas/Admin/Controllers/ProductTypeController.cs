@@ -89,7 +89,7 @@ namespace StudioAV.WebUI.Areas.Admin.Controllers
                 Name = p.Name
             });
 
-            return View();
+            return View(model);
         }
 
         [HttpPost]

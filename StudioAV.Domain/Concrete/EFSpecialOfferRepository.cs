@@ -17,26 +17,25 @@ namespace StudioAV.Domain.Concrete
         {
             get
             {
-                using (_context = new StudioAVEntities())
-                {
-                    return _context.SpecialOffers;
-                }
+                _context = new StudioAVEntities();
+                return _context.SpecialOffers;
+
             }
         }
 
 
         public SpecialOffer Delete(int offerId)
         {
-            using(_context = new StudioAVEntities())
+            using (_context = new StudioAVEntities())
             {
-                SpecialOffer DbEntry = _context.SpecialOffers.Find(offerId);
-                if(DbEntry != null)
+                SpecialOffer dbEntry = _context.SpecialOffers.Find(offerId);
+                if (dbEntry != null)
                 {
-                    _context.SpecialOffers.Remove(DbEntry);
+                    _context.SpecialOffers.Remove(dbEntry);
                     _context.SaveChanges();
                 }
 
-                return DbEntry;
+                return dbEntry;
             }
         }
 
@@ -46,7 +45,7 @@ namespace StudioAV.Domain.Concrete
             {
                 try
                 {
-                    if(offer.Id == 0)
+                    if (offer.Id == 0)
                     {
                         offer.DateCreated = DateTime.Now;
                         _context.SpecialOffers.Add(offer);
@@ -54,13 +53,13 @@ namespace StudioAV.Domain.Concrete
                     else
                     {
                         SpecialOffer dbEntry = _context.SpecialOffers.Find(offer.Id);
-                        if(dbEntry != null)
+                        if (dbEntry != null)
                         {
                             dbEntry.Actual = offer.Actual;
                             dbEntry.Description = offer.Description;
-                            dbEntry.ImageData = offer.ImageData;
-                            dbEntry.ImageType = offer.ImageType;
                             dbEntry.Name = offer.Name;
+                            dbEntry.URL = offer.URL;
+                            dbEntry.BannerPath = offer.BannerPath;
                         }
                         else
                         {
@@ -70,7 +69,7 @@ namespace StudioAV.Domain.Concrete
                     _context.SaveChanges();
                     return true;
                 }
-                catch(Exception e)
+                catch (Exception)
                 {
                     return false;
                 }

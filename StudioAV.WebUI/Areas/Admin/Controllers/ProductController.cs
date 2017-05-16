@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -13,7 +14,7 @@ namespace StudioAV.WebUI.Areas.Admin.Controllers
     public class ProductController : Controller
     {
         private IProductRepository _repository;
-        public static int ItemsPerPage = 12;
+        public int ItemsPerPage = 12;
 
         public ProductController(IProductRepository repository)
         {
@@ -62,42 +63,41 @@ namespace StudioAV.WebUI.Areas.Admin.Controllers
             return View("Edit", model);
         }
 
-        [HttpPost]
-        public ActionResult Create(ProductViewModel model, HttpPostedFileBase image = null)
-        {
-            if (ModelState.IsValid)
-            {
-                var Product = new Product();
+        //[HttpPost]
+        //public ActionResult Create(ProductViewModel model, HttpPostedFileBase Image = null, HttpPostedFileBase Thumb = null)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var Product = new Product();
 
-                if (image != null)
-                {
-                    Product.ImageType = image.ContentType;
-                    Product.ImageData = new byte[image.ContentLength];
-                    image.InputStream.Read(Product.ImageData, 0, image.ContentLength);
-                }
+        //        if (Image != null)
+        //        {
+        //            //TODO: Add image upload implementation
+        //        }
 
-                Product.Id = 0;
-                Product.Name = model.Name;
-                Product.Size = model.Size;
-                Product.Material = model.Material;
-                Product.Description = model.Description;
-                Product.Price = model.Price;
-                Product.DateCreated = DateTime.Now;
-                Product.DateModified = DateTime.Now;
-                Product.ProductTypeId = model.ProducTypeId;
-                Product.ProductCode = model.ProductCode;
+        //        Product.Id = 0;
+        //        Product.Name = model.Name;
+        //        Product.Size = model.Size;
+        //        Product.Material = model.Material;
+        //        Product.Description = model.Description;
+        //        Product.Price = model.Price;
+        //        Product.DateCreated = DateTime.Now;
+        //        Product.DateModified = DateTime.Now;
+        //        Product.ProductTypeId = model.ProducTypeId;
+        //        Product.ProductCode = model.ProductCode;
+        //        Product.ShowInFirstPage = model.ShowInFirstPage;
 
-                _repository.SaveProduct(Product);
+        //        _repository.SaveProduct(Product);
 
-                TempData["Message"] = string.Format("{0} has been added", model.Name);
+        //        TempData["Message"] = string.Format("{0} has been added", model.Name);
 
-                return RedirectToAction("Products");
-            }
-            else
-            {
-                return View("Edit", model);
-            }
-        }
+        //        return RedirectToAction("Products");
+        //    }
+        //    else
+        //    {
+        //        return View("Edit", model);
+        //    }
+        //}
 
         [HttpGet]
         public ActionResult Edit(int productId)
@@ -107,13 +107,15 @@ namespace StudioAV.WebUI.Areas.Admin.Controllers
 
             model.ProductCode = entity.ProductCode;
             model.Description = entity.Description;
-            model.ImageData = entity.ImageData;
             model.Material = entity.Material;
             model.Name = entity.Name;
             model.Price = entity.Price;
             model.ProducTypeId = entity.ProductTypeId;
             model.Size = entity.Size;
             model.ProductId = entity.Id;
+            model.ShowInFirstPage = entity.ShowInFirstPage;
+            model.MainImagePath = entity.MainImagePath;
+            model.ThumbnailPath = entity.ThumbnailPath;
 
             model.ProductTypes = _repository.ProductTypes.Select(
                 p => new ProductTypeView
@@ -126,19 +128,29 @@ namespace StudioAV.WebUI.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public ActionResult Edit(ProductViewModel model,HttpPostedFileBase image = null)
+        public ActionResult Edit(ProductViewModel model, HttpPostedFileBase Image = null, HttpPostedFileBase Thumb = null)
         {
             if (ModelState.IsValid)
             {
                 var product = new Product();
+                string ImagePath = "";
+                string ThumbPath = "";
 
-                if (image != null)
+                var path = Server.MapPath("~/Content/Images/Products/" + model.ProductCode);
+                Directory.CreateDirectory(path);
+
+                if (Image != null)
                 {
-                    product.ImageType = image.ContentType;
-                    product.ImageData = new byte[image.ContentLength];
-                    image.InputStream.Read(product.ImageData, 0, image.ContentLength);
+                    ImagePath = Path.Combine("~/Content/Images/Products/" + model.ProductCode, Guid.NewGuid() + Path.GetExtension(Image.FileName));
+                    Image.SaveAs(Server.MapPath(ImagePath));
                 }
-                
+
+                if (Thumb != null)
+                {
+                    ThumbPath = Path.Combine("~/Content/Images/Products/" + model.ProductCode, Guid.NewGuid() + Path.GetExtension(Thumb.FileName));
+                    Thumb.SaveAs(Server.MapPath(ThumbPath));
+                }
+
                 product.Id = model.ProductId;
                 product.Name = model.Name;
                 product.Size = model.Size;
@@ -148,6 +160,15 @@ namespace StudioAV.WebUI.Areas.Admin.Controllers
                 product.DateModified = DateTime.Now;
                 product.ProductTypeId = model.ProducTypeId;
                 product.ProductCode = model.ProductCode;
+                product.ShowInFirstPage = model.ShowInFirstPage;
+                product.MainImagePath = string.IsNullOrEmpty(ImagePath) ? product.MainImagePath : ImagePath;
+                product.ThumbnailPath = string.IsNullOrEmpty(ThumbPath) ? product.ThumbnailPath : ThumbPath;
+
+                //if (_repository.Products.FirstOrDefault(p => p.ProductCode == model.ProductCode) != null)
+                //{
+                //    TempData["Message"] = string.Format("{0} Product Code already used, Please choose another one", model.ProductCode);
+                //    return View("Edit", model);
+                //}
 
                 _repository.SaveProduct(product);
 
@@ -158,20 +179,6 @@ namespace StudioAV.WebUI.Areas.Admin.Controllers
             else
             {
                 return View("Edit", model);
-            }
-        }
-
-        public FileContentResult GetImage(int productId)
-        {
-            Product model = _repository.Products.FirstOrDefault(p => p.Id == productId);
-
-            if (model != null)
-            {
-                return File(model.ImageData, model.ImageType);
-            }
-            else
-            {
-                return null;
             }
         }
 

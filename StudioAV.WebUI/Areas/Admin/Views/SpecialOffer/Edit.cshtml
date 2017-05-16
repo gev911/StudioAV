@@ -20,8 +20,12 @@
                 @Html.TextBoxFor(m => m.Name, null, new { @class = "form-control" })
             </div>
             <div class="form-group">
+                <label>URL</label>
+                @Html.TextBoxFor(m => m.Url, null, new { @class = "form-control" })
+            </div>
+            <div class="form-group">
                 <label>Description</label>
-                @Html.TextAreaFor(m => m.Description, new { @class = "form-control" })
+                @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = 5 })
             </div>
             
             <div class="form-group">
@@ -31,20 +35,23 @@
                         Choose file...
                         <input type="file" name="Image" size="40"
                                style="position:absolute;z-index:2;top:0; left:0;filter: alpha(opacity=0);
-                               opacity:0; background-color:transparent;color:transparent;"
+                                                                                                  opacity:0; background-color:transparent;color:transparent;"
                                onchange='$("#upload-file-info").html($(this).val());' />
                     </a>
                     <span class="label label-info" id="upload-file-info"></span>
                 </div>
-                @if (Model.ImageData == null)
+
+                @if (!string.IsNullOrEmpty(Model.BannerPath))
                 {
-                    <div class="form-control-static">No Image</div>
+                    <img class="img-thumbnail" width="150" height="150"
+                      src="@Url.Content(Model.BannerPath)" /> 
                 }
                 else
                 {
-                    <img class="img-thumbnail" width="150" height="150"
-                         src="@Url.Action("GetImage", "SpecialOffer", new { Model.Id })" />
+                    <label>No Image</label>
                 }
+                
+
             </div>
 
         </div>

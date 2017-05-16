@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -24,7 +24,7 @@ namespace StudioAV.WebUI.Areas.Admin.Controllers
         public ActionResult SpecialOffers(int page = 1)
         {
             SpecialOfferListViewModel model = new SpecialOfferListViewModel();
-            model.SpecialOffers = _repository.SpecialOffers.Where(o => o.Actual == true).
+            model.SpecialOffers = _repository.SpecialOffers.Where(o => o.Actual).
                 OrderBy(o => o.Id).
                 Skip((page - 1) * ItemsPerPage).
                 Take(12).
@@ -59,18 +59,21 @@ namespace StudioAV.WebUI.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 SpecialOffer offer = new SpecialOffer();
+                var path = "";
 
                 if (image != null)
                 {
-                    offer.ImageType = image.ContentType;
-                    offer.ImageData = new byte[image.ContentLength];
-                    image.InputStream.Read(offer.ImageData, 0, image.ContentLength);
+                    //write image to ~/Content/Images/SpecialOffers
+                    path = Path.Combine("~/Content/Images/SpecialOffers", Guid.NewGuid() + Path.GetExtension(image.FileName));
+                    image.SaveAs(path);
                 }
 
                 offer.Name = model.Name;
                 offer.Actual = true;
                 offer.DateCreated = DateTime.Now;
                 offer.Description = model.Description;
+                offer.URL = model.Url;
+                offer.BannerPath = path;
 
                 _repository.Save(offer);
 
@@ -85,16 +88,17 @@ namespace StudioAV.WebUI.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public ActionResult Edit(int offerId)
+        public ActionResult Edit(int Id)
         {
             var model = new SpecialOfferViewModel();
-            var entity = _repository.SpecialOffers.First(o => o.Id == offerId);
+            var entity = _repository.SpecialOffers.First(o => o.Id == Id);
 
+            model.Id = Id;
             model.Name = entity.Name;
             model.Description = entity.Description;
             model.DateCreated = entity.DateCreated;
-            model.ImageData = entity.ImageData;
-            model.ImageType = entity.ImageType;
+            model.Url = entity.URL;
+            model.BannerPath = entity.BannerPath;
 
             return View(model);
         }
@@ -105,12 +109,13 @@ namespace StudioAV.WebUI.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 var offer = new SpecialOffer();
+                var path = "";
 
                 if (image != null)
                 {
-                    offer.ImageType = image.ContentType;
-                    offer.ImageData = new byte[image.ContentLength];
-                    image.InputStream.Read(offer.ImageData, 0, image.ContentLength);
+                    //write image to ~/Content/Images/SpecialOffers
+                    path = Path.Combine("~/Content/Images/SpecialOffers", Guid.NewGuid() + Path.GetExtension(image.FileName));
+                    image.SaveAs(Server.MapPath(path));
                 }
 
                 offer.Id = model.Id;
@@ -118,6 +123,8 @@ namespace StudioAV.WebUI.Areas.Admin.Controllers
                 offer.Actual = true;
                 offer.DateCreated = model.DateCreated;
                 offer.Description = model.Description;
+                offer.URL = model.Url;
+                offer.BannerPath = path;
 
                 _repository.Save(offer);
 
@@ -128,20 +135,6 @@ namespace StudioAV.WebUI.Areas.Admin.Controllers
             else
             {
                 return View("Edit", model);
-            }
-        }
-
-        public FileContentResult GetImage(int offerId)
-        {
-            var entity = _repository.SpecialOffers.FirstOrDefault(o => o.Id == offerId);
-
-            if (entity != null)
-            {
-                return File(entity.ImageData, entity.ImageType);
-            }
-            else
-            {
-                return null;
             }
         }
     }

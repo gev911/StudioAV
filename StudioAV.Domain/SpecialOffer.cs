@@ -20,7 +20,7 @@ namespace StudioAV.Domain
         public bool Actual { get; set; }
         public System.DateTime DateCreated { get; set; }
         public Nullable<System.DateTime> DateRemoved { get; set; }
-        public byte[] ImageData { get; set; }
-        public string ImageType { get; set; }
+        public string BannerPath { get; set; }
+        public string URL { get; set; }
     }
 }

@@ -24,8 +24,9 @@ namespace StudioAV.Domain
         public System.DateTime DateModified { get; set; }
         public int ProductTypeId { get; set; }
         public int ProductCode { get; set; }
-        public byte[] ImageData { get; set; }
-        public string ImageType { get; set; }
+        public bool ShowInFirstPage { get; set; }
+        public string ThumbnailPath { get; set; }
+        public string MainImagePath { get; set; }
     
         public virtual ProductType ProductType { get; set; }
     }

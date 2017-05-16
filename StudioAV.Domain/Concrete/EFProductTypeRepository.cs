@@ -9,47 +9,69 @@ namespace StudioAV.Domain.Concrete
 {
     public class EFProductTypeRepository : IProductTypeRepository
     {
-        private StudioAVEntities _context = new StudioAVEntities();
+        private StudioAVEntities _context;
 
-        public IEnumerable<ProductType> ProductTypes { get { return _context.ProductTypes; } }
+        public IEnumerable<ProductType> ProductTypes
+        {
+            get
+            {
+                _context = new StudioAVEntities();
+                return _context.ProductTypes;
+            }
+        }
 
-        public IEnumerable<ProductCategory> Categories { get { return _context.ProductCategories; } }
+        public IEnumerable<ProductCategory> Categories
+        {
+            get
+            {
+                _context = new StudioAVEntities();
+                return _context.ProductCategories;
+            }
+        }
 
         public bool SaveProductType(ProductType productType)
         {
-            try
+            using (_context = new StudioAVEntities())
             {
-                if (productType.Id == 0)
+                try
                 {
-                    _context.ProductTypes.Add(productType);
-                }
-                else
-                {
-                    ProductType DbEntity = _context.ProductTypes.Find(productType.Id);
+                    if (productType.Id == 0)
+                    {
+                        _context.ProductTypes.Add(productType);
+                    }
+                    else
+                    {
+                        ProductType DbEntity = _context.ProductTypes.Find(productType.Id);
 
-                    DbEntity.Description = productType.Description;
-                    DbEntity.Name = productType.Name;
-                    DbEntity.ProductCategoryId = productType.ProductCategoryId;
-                    DbEntity.Order = productType.Order;
+                        DbEntity.Description = productType.Description;
+                        DbEntity.Name = productType.Name;
+                        DbEntity.ProductCategoryId = productType.ProductCategoryId;
+                        DbEntity.Order = productType.Order;
+                    }
+                    _context.SaveChanges();
+                    return true;
                 }
-                _context.SaveChanges();
-                return true;
-            }
-            catch (Exception e)
-            {
-                return false;
+                catch (Exception e)
+                {
+                    return false;
+                }
             }
         }
 
         public ProductType DeleteProductType(int productTypeId)
         {
-            ProductType DbEntity = _context.ProductTypes.Find(productTypeId);
-            if (DbEntity != null)
+            using (_context = new StudioAVEntities())
             {
-                _context.ProductTypes.Remove(DbEntity);
-                _context.SaveChanges();
+                ProductType DbEntity = new ProductType();
+                DbEntity = _context.ProductTypes.Find(productTypeId);
+                if (DbEntity != null)
+                {
+                    _context.ProductTypes.Remove(DbEntity);
+                    _context.SaveChanges();
+                }
+                return DbEntity;
             }
-            return DbEntity;
+
         }
     }
 }

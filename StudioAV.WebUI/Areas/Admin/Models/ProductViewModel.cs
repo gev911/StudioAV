@@ -33,13 +33,15 @@ namespace StudioAV.WebUI.Areas.Admin.Models
         [Required(ErrorMessage = "Please Enter valid price >0.01")]
         public decimal Price { get; set; }
 
-        public byte[] ImageData { get; set; }
+        public string ThumbnailPath { get; set; }
 
-        public string ImageType { get; set; }
+        public string MainImagePath { get; set; }
 
         public DateTime DateCreated { get; set; }
 
         public DateTime DateModified { get; set; }
+
+        public bool ShowInFirstPage { get; set; }
 
         public int ProducTypeId { get; set; }
 

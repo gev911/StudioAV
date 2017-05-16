@@ -6,6 +6,7 @@
     <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <script src="~/Scripts/modernizr-2.6.2.js"></script>
+    
 </head>
 <body>
     
@@ -15,12 +16,15 @@
     }
 
 <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
-    </div>
+    @Html.ActionLink("Products", "Products", "Product", null, new { @class = "btn btn-primary" })
+    @Html.ActionLink("Product Types", "ProductTypes", "ProductType", null, new { @class = "btn btn-info" })
+    @Html.ActionLink("Special Offers", "SpecialOffers", "SpecialOffer", null, new { @class = "btn btn-danger" })
+    @RenderBody()
+    <hr/>
+    <footer>
+        <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+    </footer>
+</div>
 
     <script src="~/Scripts/jquery-1.10.2.min.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>

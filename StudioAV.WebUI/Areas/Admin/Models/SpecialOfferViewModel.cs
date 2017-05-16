@@ -15,8 +15,8 @@ namespace StudioAV.WebUI.Areas.Admin.Models
 
         public DateTime DateCreated { get; set; }
 
-        public byte[] ImageData { get; set; }
+        public string BannerPath { get; set; }
 
-        public string ImageType { get; set; }
+        public string Url { get; set; }
     }
 }

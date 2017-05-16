@@ -10,17 +10,24 @@
         <h3>Edit @Model.Name</h3>
     </div>
 
-    @using (Html.BeginForm("Edit","Product",FormMethod.Post, new {enctype = "multipart/form-data" }))
+    @using (Html.BeginForm("Edit", "Product", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
         <div class="panel-body">
             @*@Html.HiddenFor(m => m.ProductId)*@
             <div class="form-group">
                 <label>Id</label>
-                @Html.TextBoxFor(m => m.ProductId, null, new { @class = "form-control" })
+                @Html.TextBoxFor(m => m.ProductId, null, new { @class = "form-control", id = "disabledInput", @readonly = "true" })
             </div>
             <div class="form-group">
                 <label>Code</label>
-                @Html.TextBoxFor(m => m.ProductCode, null, new { @class = "form-control" })
+                @if (Model.ProductId == 0)
+                {
+                    @Html.TextBoxFor(m => m.ProductCode, null, new {@class = "form-control"});
+                }
+                else
+                {
+                    @Html.TextBoxFor(m => m.ProductCode, null, new { @class = "form-control", id = "disabledInput", @readonly = "true" });
+                }
             </div>
             <div class="form-group">
                 <label>Name</label>
@@ -43,38 +50,65 @@
                 @Html.TextBoxFor(m => m.Price, null, new { @class = "form-control" })
             </div>
             <div class="form-group">
+                <label>Show In First Page</label>
+                @Html.CheckBoxFor(m => m.ShowInFirstPage, new { @class = "form-control" })
+            </div>
+            <div class="form-group">
                 <label>Type</label>
                 @Html.DropDownListFor(m => m.ProducTypeId, new SelectList(Model.ProductTypes.ToList(), "Id", "Name"))
             </div>
+
             <div class="form-group">
                 <div style="position: relative">
                     <label>Image</label>
                     <a class="btn" href="javascript:;">
                         Choose file...
                         <input type="file" name="Image" size="40"
-                               style="position:absolute;z-index:2;top:0; left:0;filter: alpha(opacity=0); 
+                               style="position:absolute;z-index:2;top:0; left:0;filter: alpha(opacity=0);
                                opacity:0; background-color:transparent;color:transparent;"
-                               onchange='$("#upload-file-info").html($(this).val());'/>
+                               onchange='$("#upload-file-info").html($(this).val());' />
                     </a>
                     <span class="label label-info" id="upload-file-info"></span>
                 </div>
-                @if (Model.ImageData == null)
-                {
-                    <div class="form-control-static">No Image</div>
-                }
-                else
-                {
-                    <img class="img-thumbnail" width="150" height="150"
-                         src="@Url.Action("GetImage", "Product", new { Model.ProductId })" />
-                }
+            </div>
+
+            <div class="form-group">
+                <div style="position: relative">
+                    <label>Thumb</label>
+                    <a class="btn" href="javascript:;">
+                        Choose file...
+                        <input type="file" name="Thumb" size="40"
+                               style="position:absolute;z-index:2;top:0; left:0;filter: alpha(opacity=0);
+                               opacity:0; background-color:transparent;color:transparent;"
+                               onchange='$("#upload-file-info").html($(this).val());' />
+                    </a>
+                    <span class="label label-info" id="upload-file-info"></span>
+                </div>
+            </div>
+            @if (string.IsNullOrEmpty(Model.MainImagePath))
+            {
+                <div class="form-control-static">No Image</div>
+            }
+            else
+            {
+                <img class="img-thumbnail" width="150" height="150"
+                     src="@Url.Content(Model.MainImagePath)" />
+            }
+            
+            @if (string.IsNullOrEmpty(Model.ThumbnailPath))
+            {
+                <div class="form-control-static">No Image</div>
+            }
+            else
+            {
+                <img class="img-thumbnail" width="150" height="150"
+                     src="@Url.Content(Model.ThumbnailPath)" />
+            }
+        
+            <div class="panel-footer">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                @Html.ActionLink("Cancel", "Products", new { @class = "btn btn-primary" })
             </div>
         </div>
-        <div class="panel-footer">
-            <input type="submit" value="Save" class="btn btn-primary" />
-            @Html.ActionLink("Cancel", "Products", new { @class = "btn btn-primary" })
-        </div>
     }
-
-
-
 </div>

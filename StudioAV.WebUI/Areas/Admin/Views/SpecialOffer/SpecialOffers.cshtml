@@ -22,7 +22,7 @@
             {
                 <tr>
                     <td class="text-center">@item.Id</td>
-                    <td>@item.Name</td>
+                    <td>@Html.ActionLink(item.Name, "Edit", new {item.Id})</td>
                     <td class="text-right">@item.DateCreated</td>
                     <td class="text-center">
                         @using (Html.BeginForm("Archive", "SpecialOffer"))

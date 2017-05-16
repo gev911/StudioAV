@@ -9,7 +9,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
         </EntityType>
@@ -27,14 +27,15 @@
           <Property Name="DateModified" Type="datetime" Nullable="false" />
           <Property Name="ProductTypeId" Type="int" Nullable="false" />
           <Property Name="ProductCode" Type="int" Nullable="false" />
-          <Property Name="ImageData" Type="varbinary(max)" />
-          <Property Name="ImageType" Type="varchar" MaxLength="50" />
+          <Property Name="ShowInFirstPage" Type="bit" Nullable="false" />
+          <Property Name="ThumbnailPath" Type="nvarchar" MaxLength="250" />
+          <Property Name="MainImagePath" Type="nvarchar" MaxLength="250" />
         </EntityType>
         <EntityType Name="ProductTypes">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Order" Type="int" Nullable="false" />
           <Property Name="ProductCategoryId" Type="int" Nullable="false" />
@@ -50,8 +51,8 @@
           <Property Name="Actual" Type="bit" Nullable="false" />
           <Property Name="DateCreated" Type="datetime" Nullable="false" />
           <Property Name="DateRemoved" Type="datetime" />
-          <Property Name="ImageData" Type="varbinary(max)" Nullable="false" />
-          <Property Name="ImageType" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="BannerPath" Type="varchar" MaxLength="255" />
+          <Property Name="URL" Type="nvarchar" MaxLength="250" />
         </EntityType>
         <Association Name="FK_ProductCategoryProductType">
           <End Role="ProductCategories" Type="Self.ProductCategories" Multiplicity="1" />
@@ -119,8 +120,9 @@
           <NavigationProperty Name="ProductType" Relationship="StudioAVModel.ProductTypeProduct" FromRole="Product" ToRole="ProductType" />
           <Property Name="ProductTypeId" Type="Int32" Nullable="false" />
           <Property Name="ProductCode" Type="Int32" Nullable="false" />
-          <Property Name="ImageData" Type="Binary" MaxLength="Max" FixedLength="false" />
-          <Property Name="ImageType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ShowInFirstPage" Type="Boolean" Nullable="false" />
+          <Property Name="ThumbnailPath" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="MainImagePath" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="ProductType">
           <Key>
@@ -182,8 +184,8 @@
           <Property Name="Actual" Type="Boolean" Nullable="false" />
           <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="DateRemoved" Type="DateTime" Precision="3" />
-          <Property Name="ImageData" Type="Binary" Nullable="false" MaxLength="Max" FixedLength="false" />
-          <Property Name="ImageType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="BannerPath" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="URL" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -203,8 +205,9 @@
     <EntitySetMapping Name="Products">
       <EntityTypeMapping TypeName="IsTypeOf(StudioAVModel.Product)">
         <MappingFragment StoreEntitySet="Products">
-          <ScalarProperty Name="ImageType" ColumnName="ImageType" />
-                <ScalarProperty Name="ImageData" ColumnName="ImageData" />
+          <ScalarProperty Name="MainImagePath" ColumnName="MainImagePath" />
+                <ScalarProperty Name="ThumbnailPath" ColumnName="ThumbnailPath" />
+                <ScalarProperty Name="ShowInFirstPage" ColumnName="ShowInFirstPage" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Name" ColumnName="Name" />
           <ScalarProperty Name="Size" ColumnName="Size" />
@@ -232,8 +235,8 @@
           <EntitySetMapping Name="SpecialOffers">
             <EntityTypeMapping TypeName="StudioAVModel.SpecialOffer">
               <MappingFragment StoreEntitySet="SpecialOffers">
-                <ScalarProperty Name="ImageType" ColumnName="ImageType" />
-                <ScalarProperty Name="ImageData" ColumnName="ImageData" />
+                <ScalarProperty Name="URL" ColumnName="URL" />
+                <ScalarProperty Name="BannerPath" ColumnName="BannerPath" />
                 <ScalarProperty Name="DateRemoved" ColumnName="DateRemoved" />
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
                 <ScalarProperty Name="Actual" ColumnName="Actual" />
